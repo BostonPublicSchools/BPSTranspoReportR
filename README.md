@@ -41,13 +41,16 @@ instructed above and then simply source this file with
 source("<path/to/directory>/monitors_student_file.R")
 ```
 
+If using without installation you *must install dependencies* `dplyr`,
+`tidyr`, `DBI`, and `odbc` *manually*.
+
 ## Example
 
 This is a basic example which shows you how to retrieve the student
 monitor file from the Versatrans RP database:
 
 ``` r
-library(RVersatransRP)
+library(RVersatransRP) ## or source("RVersatransRP/R/monitors_student_file.R")
 
 student_monitor <- rp_report_student_monitor(database = "Sandbox", format = "long")
 
@@ -64,7 +67,7 @@ dplyr::select(
 #> $ `School Abbrev`        <chr> "0335", "0335", "0420", "0420", "0420", "0420",…
 #> $ `School Anchor Abbrev` <chr> "0335", "0335", "0420", "0420", "0420", "0420",…
 #> $ `School Name`          <chr> "Farr Acad", "Farr Acad", "LANDMARK HS", "LANDM…
-#> $ Day                    <chr> NA, NA, "M", "M", "T", "T", "W", "W", "H", "H",…
+#> $ Day                    <chr> NA, NA, "H", "H", "F", "F", "M", "M", "T", "T",…
 #> $ Shift                  <chr> "Pickup", "Dropoff", "Pickup", "Dropoff", "Pick…
 #> $ Route                  <chr> NA, NA, "04201451", "04200451", "04201451", "04…
 #> $ Bus                    <chr> NA, NA, "7D036", "7D036", "7D036", "7D036", "7D…

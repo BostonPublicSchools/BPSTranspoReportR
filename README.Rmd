@@ -1,10 +1,12 @@
 ---
-output: github_document
+output: word_document
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include = FALSE}
+if(!knitr::is_html_output()) options(width = 74)
+
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -51,13 +53,16 @@ source this file with
 source("<path/to/directory>/monitors_student_file.R")
 ```
 
+If using without installation you *must install dependencies* `dplyr`, `tidyr`, `DBI`,
+and `odbc` *manually*.
+
 ## Example
 
 This is a basic example which shows you how to retrieve the student monitor file
 from the Versatrans RP database:
 
 ```{r example1}
-library(RVersatransRP)
+library(RVersatransRP) ## or source("RVersatransRP/R/monitors_student_file.R")
 
 student_monitor <- rp_report_student_monitor(database = "Sandbox", format = "long")
 
