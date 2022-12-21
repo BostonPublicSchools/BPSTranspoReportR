@@ -2,5 +2,6 @@
 
 export(rp_connect)
 export(rp_get_table)
+export(rp_guess_dsn)
 export(rp_report_student_monitor)
 importFrom(rlang,.data)
