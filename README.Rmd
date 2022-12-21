@@ -30,22 +30,33 @@ will need to download/sync this shared drive to your local disk and install from
 you have downloaded/synced the drive directory you can install this package with
 
 ``` r
-remotes::install_local("path/to/directory")
+remotes::install_local("<path/to/directory>")
 ```
 
-Eventually we will move this package to Github so
-you can install the development version of RVersatransRP from [GitHub](https://github.com/) with:
+Eventually we will move this package to Github so you will be able to install 
+the development version of RVersatransRP from [GitHub with:
 
 ``` r
 # install.packages("devtools")
 devtools::install_github(".../RVersatransRP")
 ```
 
+## Using without installation
+
+So far all functions are defined in a single file, `monitors_studet_file.R`, so 
+you may download/sync the google drive as instructed above and then simply 
+source this file with
+
+``` r
+source("<path/to/directory>/monitors_student_file.R")
+```
+
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+This is a basic example which shows you how to retrieve the student monitor file
+from the Versatrans RP database:
 
-```{r example}
+```{r example1}
 library(RVersatransRP)
 
 student_monitor <- rp_report_student_monitor(database = "Sandbox", format = "long")
@@ -57,3 +68,16 @@ dplyr::select(
   -dplyr::contains("ID"), -dplyr::contains("Last"), -dplyr::contains("First")))
 ```
 
+Use `format = wide` for full compatibility with the monitor student file produced by RP export:
+
+```{r example2}
+library(RVersatransRP)
+
+student_monitor <- rp_report_student_monitor(database = "Sandbox", format = "wide")
+
+## example pickup data:
+dplyr::glimpse(
+dplyr::select(
+  student_monitor,
+  -dplyr::contains("ID"), -dplyr::contains("Last"), -dplyr::contains("First")))
+```

@@ -196,10 +196,12 @@ rp_report_student_monitor <- function(conn=NULL,
       cols = c("Pickup_Route", "Pickup_Bus", "Dropoff_Route", "Dropoff_Bus"),
       names_to = c("Shift", ".value"),
       names_sep = "_")
+    final_data <- dplyr::rename(final_data, Day = "Days")
   }
+
   # cleanup names, for compatibility with RP export
   names(final_data) <- gsub("_", " ", names(final_data), fixed = TRUE)
   names(final_data) <- gsub("  ", ", ", names(final_data), fixed = TRUE)
-  final_data <- dplyr::rename(final_data, Day = "Days")
+
   final_data
 }
