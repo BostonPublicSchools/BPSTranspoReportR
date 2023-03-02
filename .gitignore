@@ -3,7 +3,6 @@
 .Renviron
 .RData
 .Ruserdata
-docs
 .Rdata
 .httr-oauth
 .DS_Store
@@ -11,4 +10,3 @@ docs
 README.docx
 renv
 .zonarCache
-Hourly AM OTP.R

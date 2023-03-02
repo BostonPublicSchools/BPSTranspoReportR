@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>/404.html</loc>
+  </url>
+  <url>
+    <loc>/authors.html</loc>
+  </url>
+  <url>
+    <loc>/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/otp_report.html</loc>
+  </url>
+  <url>
+    <loc>/reference/rp_connect.html</loc>
+  </url>
+  <url>
+    <loc>/reference/rp_get_table.html</loc>
+  </url>
+  <url>
+    <loc>/reference/rp_guess_dsn.html</loc>
+  </url>
+  <url>
+    <loc>/reference/rp_report_student_monitor.html</loc>
+  </url>
+</urlset>
