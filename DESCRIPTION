@@ -1,26 +1,24 @@
-Package: RVersatransRP
+Package: BPSTranspoReportR
 Type: Package
-Title: Retrieve and format data from a Versatrans Routing and Planning Database.
+Title: Generate reports needed by BPS Transportation
 Version: 0.1.0
 Author: Ista Zahn
 Maintainer: Ista Zahn <izahn@bostonpublicschools.org>
-Description: Versatrans Routing and Planning databases can be queried directly
-    via SQL. This is useful, but often the data returned from such queries needs
-    to be extensively reformatted, summarized, or stored in different formats
-    for use by other tools. For example, it is sometimes useful to store RP 
-    query results as google sheets for use in constructing dashboards. The 
-    RVersatransRP package makes it easier to carry out these data 
-    post-processing and storage tasks.
+Description: Provides R functions for generating On-time performance and other reports.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 Imports:
+    RZonar,
+    RVersatransRP,
     dplyr,
     DBI,
-    odbc,
-    tidyr,
+    lubridate,
+    stringr,
+    googlesheets4,
+    gmailr,
     rlang
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.3
 Depends: 
     R (>= 2.10)

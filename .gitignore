@@ -9,3 +9,6 @@ docs
 .DS_Store
 .docx
 README.docx
+renv
+.zonarCache
+Hourly AM OTP.R

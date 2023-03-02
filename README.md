@@ -1,18 +1,18 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# RVersatransRP
+# BPSTranspoReportR
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of RVersatransRP is to provide easy to use functions for
+The goal of BPSTranspoReportR is to provide easy to use functions for
 querying and formatting data from a Versatrans Routing & Planning
 database.
 
 ## Installation
 
-RVersatransRP is currently available from our [shared Google Drive
+BPSTranspoReportR is currently available from our [shared Google Drive
 folder](https://drive.google.com/drive/folders/1e_C8c5epf8IqcKyP4g9TzaFm1Vnlr8wM?usp=sharing).
 I don’t think there is any easy way to install or update directly from
 there, so you will need to download/sync this shared drive to your local
@@ -24,11 +24,11 @@ remotes::install_local("<path/to/directory>")
 ```
 
 Eventually we will move this package to Github so you will be able to
-install the development version of RVersatransRP from \[GitHub with:
+install the development version of BPSTranspoReportR from \[GitHub with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github(".../RVersatransRP")
+devtools::install_github(".../BPSTranspoReportR")
 ```
 
 ## Using without installation
@@ -50,7 +50,7 @@ This is a basic example which shows you how to retrieve the student
 monitor file from the Versatrans RP database:
 
 ``` r
-library(RVersatransRP) ## or source("RVersatransRP/R/monitors_student_file.R")
+library(BPSTranspoReportR) ## or source("BPSTranspoReportR/R/monitors_student_file.R")
 
 student_monitor <- rp_report_student_monitor(database = "Sandbox", format = "long")
 
@@ -77,7 +77,7 @@ Use `format = wide` for full compatibility with the monitor student file
 produced by RP export:
 
 ``` r
-library(RVersatransRP)
+library(BPSTranspoReportR)
 
 student_monitor <- rp_report_student_monitor(database = "Sandbox", format = "wide")
 
