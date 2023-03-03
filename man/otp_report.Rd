@@ -7,17 +7,15 @@
 otp_report(
   date = as.character(Sys.Date()),
   ampm = c("AM", "PM"),
-  includeZonar = TRUE,
+  include_zonar = TRUE,
   cutoff_min = -25,
   cutoff_max = 60,
-  rp_database = "SY_Live_RP",
-  os_database = "Onscreen021919",
+  rp_database = Sys.getenv("RP_DATABASE"),
+  os_database = Sys.getenv("OS_DATABASE"),
   rp_odbc_name = Sys.getenv("RP_ODBC_NAME"),
-  uncoveredURL =
-    "https://docs.google.com/spreadsheets/d/1OcpCGaPKZYaeazNuPjkzyWT8c-HgcFvMbzObuA-lZ50",
-  mailTo = c("izahn@bostonpublicschools.org", "drosengard@bostonpublicschools.org",
-    "ezanzerkia@bostonpublicschools.org"),
-  mailFrom = "izahn@bostonpublicschools.org",
+  uncovered_url = Sys.getenv("UNCOVERED_URL"),
+  mail_to = strsplit(Sys.getenv("MAIL_TO"), ",")[[1]],
+  mail_from = Sys.getenv("MAIL_FROM"),
   TZ = "America/New_York",
   test = FALSE
 )
@@ -28,7 +26,7 @@ otp_report(
 \item{ampm}{Character vector of length 1, either "AM", or "PM", use to
 specify morning or evening OTP report.}
 
-\item{includeZonar}{Logical vector of length 1. If \code{TRUE} zonar schedule data
+\item{include_zonar}{Logical vector of length 1. If \code{TRUE} zonar schedule data
 will be retrieved and used for OTP calculations.}
 
 \item{cutoff_min}{numeric vector of length one giving the minimum delay time in minutes
@@ -47,12 +45,12 @@ see RVersatransRP package for details.}
 from \code{RP_ODBC_NAME} environment variable by default but can be overridden
 here, see RVersatransRP package for details.}
 
-\item{uncoveredURL}{URL of a google sheet containing a list of uncovered trips.
+\item{uncovered_url}{URL of a google sheet containing a list of uncovered trips.
 Must contain columns named "Date", "AM/PM", "Route Set", and "Bus".}
 
-\item{mailTo}{Character vector of email addresses to send notifications to.}
+\item{mail_to}{Character vector of email addresses to send notifications to.}
 
-\item{mailFrom}{GMail address used to send notification emails.}
+\item{mail_from}{GMail address used to send notification emails.}
 
 \item{TZ}{The timezone used by the database server.}
 
@@ -70,7 +68,7 @@ TODO
 \examples{
 \dontshow{if (Sys.getenv("RP_ODBC_NAME")!=""&Sys.getenv("RP_DATABASE")!=""&Sys.getenv("ZONAR_PASS")!="") (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 
-otp <- zonar_otp_report("2023-02-14", ampm = "AM", test = TRUE)
-dplyr::glimpse(otp)
+otp <- otp_report("2023-02-14", ampm = "AM", test = TRUE)
+dplyr::glimpse(otp[0,])
 \dontshow{\}) # examplesIf}
 }

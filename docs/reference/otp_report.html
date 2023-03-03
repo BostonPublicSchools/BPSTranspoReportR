@@ -51,17 +51,15 @@ for public reporting.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">otp_report</span><span class="op">(</span></span>
 <span>  date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  ampm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AM"</span>, <span class="st">"PM"</span><span class="op">)</span>,</span>
-<span>  includeZonar <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  include_zonar <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  cutoff_min <span class="op">=</span> <span class="op">-</span><span class="fl">25</span>,</span>
 <span>  cutoff_max <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  rp_database <span class="op">=</span> <span class="st">"SY_Live_RP"</span>,</span>
-<span>  os_database <span class="op">=</span> <span class="st">"Onscreen021919"</span>,</span>
+<span>  rp_database <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"RP_DATABASE"</span><span class="op">)</span>,</span>
+<span>  os_database <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"OS_DATABASE"</span><span class="op">)</span>,</span>
 <span>  rp_odbc_name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"RP_ODBC_NAME"</span><span class="op">)</span>,</span>
-<span>  uncoveredURL <span class="op">=</span></span>
-<span>    <span class="st">"https://docs.google.com/spreadsheets/d/1OcpCGaPKZYaeazNuPjkzyWT8c-HgcFvMbzObuA-lZ50"</span>,</span>
-<span>  mailTo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"izahn@bostonpublicschools.org"</span>, <span class="st">"drosengard@bostonpublicschools.org"</span>,</span>
-<span>    <span class="st">"ezanzerkia@bostonpublicschools.org"</span><span class="op">)</span>,</span>
-<span>  mailFrom <span class="op">=</span> <span class="st">"izahn@bostonpublicschools.org"</span>,</span>
+<span>  uncovered_url <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"UNCOVERED_URL"</span><span class="op">)</span>,</span>
+<span>  mail_to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"MAIL_TO"</span><span class="op">)</span>, <span class="st">","</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  mail_from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"MAIL_FROM"</span><span class="op">)</span>,</span>
 <span>  TZ <span class="op">=</span> <span class="st">"America/New_York"</span>,</span>
 <span>  test <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -78,7 +76,7 @@ for public reporting.</p>
 specify morning or evening OTP report.</p></dd>
 
 
-<dt>includeZonar</dt>
+<dt>include_zonar</dt>
 <dd><p>Logical vector of length 1. If <code>TRUE</code> zonar schedule data
 will be retrieved and used for OTP calculations.</p></dd>
 
@@ -109,16 +107,16 @@ from <code>RP_ODBC_NAME</code> environment variable by default but can be overri
 here, see RVersatransRP package for details.</p></dd>
 
 
-<dt>uncoveredURL</dt>
+<dt>uncovered_url</dt>
 <dd><p>URL of a google sheet containing a list of uncovered trips.
 Must contain columns named "Date", "AM/PM", "Route Set", and "Bus".</p></dd>
 
 
-<dt>mailTo</dt>
+<dt>mail_to</dt>
 <dd><p>Character vector of email addresses to send notifications to.</p></dd>
 
 
-<dt>mailFrom</dt>
+<dt>mail_from</dt>
 <dd><p>GMail address used to send notification emails.</p></dd>
 
 
@@ -139,10 +137,19 @@ Even with this the time needed to test this function will be long.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">otp</span> <span class="op">&lt;-</span> <span class="fu">zonar_otp_report</span><span class="op">(</span><span class="st">"2023-02-14"</span>, ampm <span class="op">=</span> <span class="st">"AM"</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in zonar_otp_report("2023-02-14", ampm = "AM", test = TRUE):</span> could not find function "zonar_otp_report"</span>
-<span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">otp</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dplyr::glimpse(otp):</span> object 'otp' not found</span>
+<span class="r-in"><span><span class="va">otp</span> <span class="op">&lt;-</span> <span class="fu">otp_report</span><span class="op">(</span><span class="st">"2023-02-14"</span>, ampm <span class="op">=</span> <span class="st">"AM"</span>, test <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Using an auto-discovered, cached token.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   To suppress this message, modify your code or options to clearly consent to</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   the use of a cached token.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   See gargle's "Non-interactive auth" vignette for more details:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   <span style="color: #0000BB; font-style: italic;">&lt;</span><a href="https://gargle.r-lib.org/articles/non-interactive-auth.html" class="external-link"><span style="color: #0000BB; font-style: italic;">https://gargle.r-lib.org/articles/non-interactive-auth.html</span></a><span style="color: #0000BB; font-style: italic;">&gt;</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> The <span style="color: #0000BB;">googlesheets4</span> package is using a cached token for</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   <a href="mailto:izahn@bostonpublicschools.org"><span style="color: #0000BB;">izahn@bostonpublicschools.org</span></a>.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Reading from <span style="color: #00BBBB;">SY22-23 Uncovered Tracking</span>.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Range '<span style="color: #BBBB00;">2022-23 SY Uncovered Trip Data (starting 8/29)</span>'.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> 'zonar_get_zone_categories' is not an exported object from 'namespace:RZonar'</span>
+<span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">otp</span><span class="op">[</span><span class="fl">0</span>,<span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dplyr::glimpse(otp[0, ]):</span> object 'otp' not found</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

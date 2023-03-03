@@ -10,7 +10,7 @@
 #' @param date Character vector of length 1 giving the date in YYY-MM-DD format.
 #' @param ampm Character vector of length 1, either "AM", or "PM", use to
 #' specify morning or evening OTP report.
-#' @param includeZonar Logical vector of length 1. If `TRUE` zonar schedule data
+#' @param include_zonar Logical vector of length 1. If `TRUE` zonar schedule data
 #' will be retrieved and used for OTP calculations.
 #' @param cutoff_min numeric vector of length one giving the minimum delay time in minutes
 #' that will be considered a valid trip arrival. Usually this will be a negative value, e.g., -25 or so.
@@ -19,14 +19,14 @@
 #' @param rp_odbc_name Name of the Windows ODBC data source to use. Retrieved
 #' from `RP_ODBC_NAME` environment variable by default but can be overridden
 #' here, see RVersatransRP package for details.
-#' @param uncoveredURL URL of a google sheet containing a list of uncovered trips.
+#' @param uncovered_url URL of a google sheet containing a list of uncovered trips.
 #' Must contain columns named "Date", "AM/PM", "Route Set", and "Bus".
 #' @param rp_database Name of the RP database to connect to. Retrieved
 #' from `RP_DATABASE` environment variable by default but can be overridden here,
 #' see RVersatransRP package for details.
 #' @param os_database Name of the Onscreen database to connect to.
-#' @param mailFrom GMail address used to send notification emails.
-#' @param mailTo Character vector of email addresses to send notifications to.
+#' @param mail_from GMail address used to send notification emails.
+#' @param mail_to Character vector of email addresses to send notifications to.
 #' @param TZ The timezone used by the database server.
 #' @param test Logical vector of length one indicating whether to pull an abbreviated test data set.
 #' Even with this the time needed to test this function will be long.
@@ -38,20 +38,20 @@
 #'
 #' @examplesIf Sys.getenv("RP_ODBC_NAME")!=""&Sys.getenv("RP_DATABASE")!=""&Sys.getenv("ZONAR_PASS")!=""
 #'
-#' otp <- zonar_otp_report("2023-02-14", ampm = "AM", test = TRUE)
-#' dplyr::glimpse(otp)
+#' otp <- otp_report("2023-02-14", ampm = "AM", test = TRUE)
+#' dplyr::glimpse(otp[0,])
 #'
 otp_report <- function(date = as.character(Sys.Date()),
                        ampm = c("AM", "PM"),
-                       includeZonar = TRUE,
+                       include_zonar = TRUE,
                        cutoff_min = -25,
                        cutoff_max = 60,
-                       rp_database = "SY_Live_RP",
-                       os_database = "Onscreen021919",
+                       rp_database = Sys.getenv("RP_DATABASE"),
+                       os_database = Sys.getenv("OS_DATABASE"),
                        rp_odbc_name = Sys.getenv("RP_ODBC_NAME"),
-                       uncoveredURL = "https://docs.google.com/spreadsheets/d/1OcpCGaPKZYaeazNuPjkzyWT8c-HgcFvMbzObuA-lZ50",
-                       mailTo = c("izahn@bostonpublicschools.org", "drosengard@bostonpublicschools.org", "ezanzerkia@bostonpublicschools.org"),
-                       mailFrom = "izahn@bostonpublicschools.org",
+                       uncovered_url = Sys.getenv("UNCOVERED_URL"),
+                       mail_to = strsplit(Sys.getenv("MAIL_TO"), ",")[[1]],
+                       mail_from = Sys.getenv("MAIL_FROM"),
                        TZ = "America/New_York",
                        test = FALSE) {
 
@@ -87,7 +87,7 @@ otp_report <- function(date = as.character(Sys.Date()),
   dataRouteSet <- dplyr::mutate(dataRouteSet, across(where(is.character), stringr::str_squish))
   dataRoute <- dplyr::left_join(dataRoute, dataRouteSet, by = "RouteSetID")
 
-  dataUncovered <- googlesheets4::read_sheet(uncoveredURL, col_types = "Dccccc")
+  dataUncovered <- googlesheets4::read_sheet(uncovered_url, col_types = "Dccccc")
   dataUncoveredOrig <- dataUncovered
   dataUncovered <- dplyr::transmute(
     dataUncovered,
@@ -177,7 +177,7 @@ otp_report <- function(date = as.character(Sys.Date()),
   zones <- dplyr::mutate(RZonar::zonar_get_zones(), across(where(is.character), stringr::str_squish))
   zoneCategories <- dplyr::distinct(dplyr::select(zones, "category", "type"))
 
-  if(includeZonar) {
+  if(include_zonar) {
   zonarSched <- RZonar::zonar_get_schedules(
     start = start,
     end = end,
@@ -276,7 +276,7 @@ otp_report <- function(date = as.character(Sys.Date()),
   dataCovered <- dplyr::filter(dataFull, .data$Uncovered & (!is.na(.data$ActualTime) | !is.na(.data$zonarActualTime)))
   ## delete trips incorrectly listed as uncovered
   if(nrow(dataCovered) > 0) {
-    ducheck <- nrow(googlesheets4::read_sheet(uncoveredURL, col_types = "Dccccc"))
+    ducheck <- nrow(googlesheets4::read_sheet(uncovered_url, col_types = "Dccccc"))
     if(nrow(dataUncoveredOrig) != ducheck) {
       message("uncovered trips log was modified externally, skipping update")
     } else {
@@ -287,16 +287,16 @@ otp_report <- function(date = as.character(Sys.Date()),
 
       if(length(coveredRows) > 0) {
         coveredRows <- sort(coveredRows, decreasing = TRUE)
-        for(row in as.character(coveredRows + 1)) googlesheets4::range_delete(uncoveredURL, range = paste0(row, ":", row))
+        for(row in as.character(coveredRows + 1)) googlesheets4::range_delete(uncovered_url, range = paste0(row, ":", row))
         txt <- paste("This automated notice is to inform you that one or more trips in the uncovered",
-                      "list at ", uncoveredURL, " have been removed. These trips were determined to have been covered after all.",
+                      "list at ", uncovered_url, " have been removed. These trips were determined to have been covered after all.",
                       "The following records were removed:\n\n<pre><code>",
                       paste0(gsub("`", " ", capture.output(print(dataUncoveredOrig[coveredRows, ]))[-c(1, 3)], fixed = TRUE), collapse = "\n"),
                       "</code></pre>\n\nIf you no longer wish to receive this notice reply \"unsubscribe\".",
                       collapse = " ", sep = " ")
         email <- gmailr::gm_mime()
-        email <- gmailr::gm_to(email, mailTo)
-        email <- gmailr::gm_from(email, mailFrom)
+        email <- gmailr::gm_to(email, mail_to)
+        email <- gmailr::gm_from(email, mail_from)
         email <- gmailr::gm_subject(email, "Uncovered trips updated")
         email <- gmailr::gm_html_body(email, txt)
         gmailr::gm_send_message(email)

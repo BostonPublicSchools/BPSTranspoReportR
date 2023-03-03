@@ -7,42 +7,21 @@
 <!-- badges: end -->
 
 The goal of BPSTranspoReportR is to provide easy to use functions for
-querying and formatting data from a Versatrans Routing & Planning
-database.
+generating reports and data summaries from data stored in Versatrans
+RP/Onscreen, and Zonar.
 
 ## Installation
 
-BPSTranspoReportR is currently available from our [shared Google Drive
-folder](https://drive.google.com/drive/folders/1e_C8c5epf8IqcKyP4g9TzaFm1Vnlr8wM?usp=sharing).
-I don’t think there is any easy way to install or update directly from
-there, so you will need to download/sync this shared drive to your local
-disk and install from there. Once you have downloaded/synced the drive
-directory you can install this package with
+BPSTranspoReportR is currently available from our [GitHub
+page](https://github.com/BostonPublicSchools/BPSTranspoReportR). You can
+the development version of BPSTranspoReportR from GitHub with:
 
 ``` r
-remotes::install_local("<path/to/directory>")
+# install.packages("remotes") ## if you don't have remotes installed already
+remotes::install_github(c("BostonPublicSchools/RVersatransRP",
+                          "BostonPublicSchools/RZonar",
+                          "BostonPublicSchools/BPSTranspoReportR")
 ```
-
-Eventually we will move this package to Github so you will be able to
-install the development version of BPSTranspoReportR from \[GitHub with:
-
-``` r
-# install.packages("devtools")
-devtools::install_github(".../BPSTranspoReportR")
-```
-
-## Using without installation
-
-So far all functions are defined in a single file,
-`monitors_studet_file.R`, so you may download/sync the google drive as
-instructed above and then simply source this file with
-
-``` r
-source("<path/to/directory>/monitors_student_file.R")
-```
-
-If using without installation you *must install dependencies* `dplyr`,
-`tidyr`, `DBI`, and `odbc` *manually*.
 
 ## Example
 
@@ -50,68 +29,80 @@ This is a basic example which shows you how to retrieve the student
 monitor file from the Versatrans RP database:
 
 ``` r
-library(BPSTranspoReportR) ## or source("BPSTranspoReportR/R/monitors_student_file.R")
-
-student_monitor <- rp_report_student_monitor(database = "Sandbox", format = "long")
-
-## example pickup data:
-dplyr::glimpse(
-dplyr::select(
-  student_monitor,
-  -dplyr::contains("ID"), -dplyr::contains("Last"), -dplyr::contains("First")))
-#> Rows: 207,702
-#> Columns: 10
-#> $ `Program Description`  <chr> "DR DOOR FULL DAY", "DR DOOR FULL DAY", "DR DOO…
-#> $ `INFO WC`              <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
-#> $ `INFO NEED MONITOR`    <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
-#> $ `School Abbrev`        <chr> "0335", "0335", "0420", "0420", "0420", "0420",…
-#> $ `School Anchor Abbrev` <chr> "0335", "0335", "0420", "0420", "0420", "0420",…
-#> $ `School Name`          <chr> "Farr Acad", "Farr Acad", "LANDMARK HS", "LANDM…
-#> $ Day                    <chr> NA, NA, "H", "H", "F", "F", "M", "M", "T", "T",…
-#> $ Shift                  <chr> "Pickup", "Dropoff", "Pickup", "Dropoff", "Pick…
-#> $ Route                  <chr> NA, NA, "04201451", "04200451", "04201451", "04…
-#> $ Bus                    <chr> NA, NA, "7D036", "7D036", "7D036", "7D036", "7D…
-```
-
-Use `format = wide` for full compatibility with the monitor student file
-produced by RP export:
-
-``` r
 library(BPSTranspoReportR)
 
-student_monitor <- rp_report_student_monitor(database = "Sandbox", format = "wide")
-
-## example pickup data:
-dplyr::glimpse(
-dplyr::select(
-  student_monitor,
-  -dplyr::contains("ID"), -dplyr::contains("Last"), -dplyr::contains("First")))
-#> Rows: 21,421
-#> Columns: 26
-#> $ `Program Description`  <chr> "DR DOOR FULL DAY", "DR DOOR FULL DAY", "DR DOO…
-#> $ `INFO WC`              <chr> NA, NA, NA, NA, NA, NA, "WC", NA, NA, NA, NA, N…
-#> $ `INFO NEED MONITOR`    <chr> NA, NA, "M", "M", NA, NA, "1", NA, "M", NA, NA,…
-#> $ `School Abbrev`        <chr> "0335", "0420", NA, "0641", "0517", "0292", "06…
-#> $ `School Anchor Abbrev` <chr> "0335", "0420", NA, "0641", "0517", "0292", "06…
-#> $ `School Name`          <chr> "Farr Acad", "LANDMARK HS", "CENTRAL MA PREP CO…
-#> $ `Mon. Pickup Bus`      <chr> NA, "7D036", NA, "MS012", NA, NA, "WB960", "7D0…
-#> $ `Mon. Pickup Route`    <chr> NA, "04201451", NA, "06411451", NA, NA, "065925…
-#> $ `Mon. Dropoff Bus`     <chr> NA, "7D036", NA, "MS012", NA, NA, "WB960", "7D0…
-#> $ `Mon. Dropoff Route`   <chr> NA, "04200451", NA, "06419451", NA, NA, "065995…
-#> $ `Tue. Pickup Bus`      <chr> NA, "7D036", NA, "MS012", NA, NA, "WB960", "7D0…
-#> $ `Tue. Pickup Route`    <chr> NA, "04201451", NA, "06411451", NA, NA, "065925…
-#> $ `Tue. Dropoff Bus`     <chr> NA, "7D036", NA, "MS012", NA, NA, "WB960", "7D0…
-#> $ `Tue. Dropoff Route`   <chr> NA, "04200451", NA, "06419451", NA, NA, "065995…
-#> $ `Wed. Pickup Bus`      <chr> NA, "7D036", NA, "MS012", NA, NA, "WB960", "7D0…
-#> $ `Wed. Pickup Route`    <chr> NA, "04201451", NA, "06411451", NA, NA, "065925…
-#> $ `Wed. Dropoff Bus`     <chr> NA, "7D036", NA, "MS012", NA, NA, "WB960", "7D0…
-#> $ `Wed. Dropoff Route`   <chr> NA, "04200451", NA, "06419451", NA, NA, "065995…
-#> $ `Thu. Pickup Bus`      <chr> NA, "7D036", NA, "MS012", NA, NA, "WB960", "7D0…
-#> $ `Thu. Pickup Route`    <chr> NA, "04201451", NA, "06411451", NA, NA, "065925…
-#> $ `Thu. Dropoff Bus`     <chr> NA, "7D036", NA, "MS012", NA, NA, "WB960", "7D0…
-#> $ `Thu. Dropoff Route`   <chr> NA, "04200451", NA, "06419451", NA, NA, "065975…
-#> $ `Fri. Pickup Bus`      <chr> NA, "7D036", NA, "MS012", NA, NA, "WB960", "7D0…
-#> $ `Fri. Pickup Route`    <chr> NA, "04201451", NA, "06411451", NA, NA, "065925…
-#> $ `Fri. Dropoff Bus`     <chr> NA, "7D036", NA, "MS012", NA, NA, "WB960", "7D0…
-#> $ `Fri. Dropoff Route`   <chr> NA, "04200451", NA, "06419451", NA, NA, "065995…
+## run report for yesterday
+student_monitor <- otp_report(as.character(Sys.Date() -1))
 ```
+
+``` r
+## OTP data structure:
+dplyr::glimpse(student_monitor[0, ])
+#> Rows: 0
+#> Columns: 34
+#> $ RPVehicle           <chr> 
+#> $ RPRoute             <chr> 
+#> $ ExpectedTime        <dttm> 
+#> $ Arrival             <dttm> 
+#> $ delayTimeCombined   <int> 
+#> $ ActualTime          <dttm> 
+#> $ zonarActualTime     <dttm> 
+#> $ DelayTime           <int> 
+#> $ zonarDelayTime      <int> 
+#> $ Direction           <chr> 
+#> $ AnchorAbbrev        <chr> 
+#> $ Date                <dttm> 
+#> $ AMPM                <chr> 
+#> $ OvernightGarage     <chr> 
+#> $ Names               <chr> 
+#> $ RouteName           <chr> 
+#> $ load                <int> 
+#> $ Days                <chr> 
+#> $ RouteSetName        <chr> 
+#> $ excludedShuttlesEtc <lgl> 
+#> $ OriginalRPVehicle   <chr> 
+#> $ Zone                <chr> 
+#> $ zonarCategory       <chr> 
+#> $ zonarDuration       <drtn>  secs
+#> $ inZonar             <lgl> 
+#> $ inOnscreen          <lgl> 
+#> $ arrivalTimeSource   <chr> 
+#> $ arrivalInWindow     <lgl> 
+#> $ zoneInZonar         <lgl> 
+#> $ OSVehicleOverride   <lgl> 
+#> $ Uncovered           <lgl> 
+#> $ cutoff_min          <dbl> 
+#> $ cutoff_max          <dbl> 
+#> $ TripCategory        <chr>
+```
+
+## Credentials and other private information
+
+Usernames, passwords, and other private information will usually be
+needed in order to access the data sources required to generate reports.
+By default these are retrieved from environment variables. You can
+either set these system-wide, or set up an `.Renviron` file as described
+in
+<https://support.posit.co/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf>.
+
+The list of environment variables consulted by functions in this package
+is:
+
+- *RP_ODBC_NAME* name of the ODBC data source used to connect to
+  Versatrans databases
+- *RP_DATABASE* name of the RP database to use
+- *OS_DATABASE* name of the Onscreen database to use
+- *UNCOVERED_URL* URL of a google sheet containing uncovered trips list
+  (required)
+- *MAIL_TO* comma-separated list of email addresses to send
+  notifications to. (required)
+- *MAIL_FROM* gmail address from which notifications should be sent
+  (required)
+- *TZ* time zone, defaults to “America/New_York”,
+- *CURL_SSL_BACKEND* this should always be set to “openssl” (required)
+- *ZONAR_CUSTOMER* Zonar customer ID (required)
+- *ZONAR_USER* Zonar user name (required)
+- *ZONAR_PASS* ZOnar password (required)
+
+Not everything here is required, some of these variables will have
+reasonable defaults.
