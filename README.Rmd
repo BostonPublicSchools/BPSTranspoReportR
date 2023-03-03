@@ -68,19 +68,25 @@ are retrieved from environment variables. You can either set these system-wide,
 or set up an `.Renviron` file as described in
 https://support.posit.co/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf.
 
-The list of environment variables consulted by functions in this package is:
+Note that *this is just for convenience, you can also just pass everything as arguemnts to your function calls*.
 
-- *RP_ODBC_NAME* name of the ODBC data source used to connect to Versatrans databases
-- *RP_DATABASE* name of the RP database to use
-- *OS_DATABASE* name of the Onscreen database to use
-- *UNCOVERED_URL* URL of a google sheet containing uncovered trips list (required)
-- *MAIL_TO* comma-separated list of email addresses to send notifications to. (required)
-- *MAIL_FROM* gmail address from which notifications should be sent (required)
-- *TZ* time zone, defaults to "America/New_York",
-- *CURL_SSL_BACKEND* this should always be set to "openssl" (required)
-- *ZONAR_CUSTOMER* Zonar customer ID (required)
-- *ZONAR_USER* Zonar user name (required)
-- *ZONAR_PASS* ZOnar password (required)
+If you do set environment variables with private information, 
+**make sure that these values are not checked into git or otherwise unintentionally exposed**.
 
-Not everything here is required, some of these variables will have reasonable defaults.
+The environment variables consulted by functions in this package are shown in the table below.
+
+| Variable           | Description                                                                  |
+| ------------------ | ---------------------------------------------------------------------------- |
+| *RP_ODBC_NAME*     | name of the ODBC data source used to connect to Versatrans databases         |
+| *RP_DATABASE*      | name of the RP database to use                                               |
+| *OS_DATABASE*      | name of the Onscreen database to use                                         |
+| *UNCOVERED_URL*    | URL of a google sheet containing uncovered trips list (required)             |
+| *MAIL_TO*          | comma separated list of email addresses to send notifications to. (required) |
+| *MAIL_FROM*        | gmail address from which notifications should be sent (required)             |
+| *TZ*               | time zone, defaults to "America/New_York",                                   |
+| *CURL_SSL_BACKEND* | this should always be set to "openssl" (required)                            |
+| *ZONAR_CUSTOMER*   | Zonar customer ID (required)                                                 |
+| *ZONAR_USER*       | Zonar user name (required)                                                   |
+| *ZONAR_PASS*       | ZOnar password (required)                                                    |
+| ------------------ | ---------------------------------------------------------------------------- |
 

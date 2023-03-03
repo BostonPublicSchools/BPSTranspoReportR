@@ -147,9 +147,44 @@ Even with this the time needed to test this function will be long.</p></dd>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   <a href="mailto:izahn@bostonpublicschools.org"><span style="color: #0000BB;">izahn@bostonpublicschools.org</span></a>.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Reading from <span style="color: #00BBBB;">SY22-23 Uncovered Tracking</span>.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Range '<span style="color: #BBBB00;">2022-23 SY Uncovered Trip Data (starting 8/29)</span>'.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> 'zonar_get_zone_categories' is not an exported object from 'namespace:RZonar'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> NOTE: only pulling schedule data for the first five zones; omit 'test' parameter if you want everything</span>
 <span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">otp</span><span class="op">[</span><span class="fl">0</span>,<span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dplyr::glimpse(otp[0, ]):</span> object 'otp' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Rows: 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Columns: 34</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ RPVehicle           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ RPRoute             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ ExpectedTime        <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ Arrival             <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ delayTimeCombined   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ ActualTime          <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ zonarActualTime     <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ DelayTime           <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ zonarDelayTime      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ Direction           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ AnchorAbbrev        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ Date                <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ AMPM                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ OvernightGarage     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ Names               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ RouteName           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ load                <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ Days                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ RouteSetName        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ excludedShuttlesEtc <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ OriginalRPVehicle   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ Zone                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ zonarCategory       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ zonarDuration       <span style="color: #949494; font-style: italic;">&lt;drtn&gt;</span>  secs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ inZonar             <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ inOnscreen          <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ arrivalTimeSource   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ arrivalInWindow     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ zoneInZonar         <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ OSVehicleOverride   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ Uncovered           <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ cutoff_min          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ cutoff_max          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ TripCategory        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

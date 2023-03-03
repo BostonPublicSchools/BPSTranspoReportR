@@ -118,32 +118,69 @@
 <h2 id="credentials-and-other-private-information">Credentials and other private information<a class="anchor" aria-label="anchor" href="#credentials-and-other-private-information"></a>
 </h2>
 <p>Usernames, passwords, and other private information will usually be needed in order to access the data sources required to generate reports. By default these are retrieved from environment variables. You can either set these system-wide, or set up an <code>.Renviron</code> file as described in <a href="https://support.posit.co/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf" class="external-link uri">https://support.posit.co/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf</a>.</p>
-<p>The list of environment variables consulted by functions in this package is:</p>
-<ul>
-<li>
-<em>RP_ODBC_NAME</em> name of the ODBC data source used to connect to Versatrans databases</li>
-<li>
-<em>RP_DATABASE</em> name of the RP database to use</li>
-<li>
-<em>OS_DATABASE</em> name of the Onscreen database to use</li>
-<li>
-<em>UNCOVERED_URL</em> URL of a google sheet containing uncovered trips list (required)</li>
-<li>
-<em>MAIL_TO</em> comma-separated list of email addresses to send notifications to. (required)</li>
-<li>
-<em>MAIL_FROM</em> gmail address from which notifications should be sent (required)</li>
-<li>
-<em>TZ</em> time zone, defaults to “America/New_York”,</li>
-<li>
-<em>CURL_SSL_BACKEND</em> this should always be set to “openssl” (required)</li>
-<li>
-<em>ZONAR_CUSTOMER</em> Zonar customer ID (required)</li>
-<li>
-<em>ZONAR_USER</em> Zonar user name (required)</li>
-<li>
-<em>ZONAR_PASS</em> ZOnar password (required)</li>
-</ul>
-<p>Not everything here is required, some of these variables will have reasonable defaults.</p>
+<p>Note that <em>this is just for convenience, you can also just pass everything as arguemnts to your function calls</em>.</p>
+<p>If you do set environment variables with private information, <strong>make sure that these values are not checked into git or otherwise unintentionally exposed</strong>.</p>
+<p>The environment variables consulted by functions in this package are shown in the table below.</p>
+<table class="table">
+<colgroup>
+<col width="20%">
+<col width="79%">
+</colgroup>
+<thead><tr class="header">
+<th>Variable</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><em>RP_ODBC_NAME</em></td>
+<td>name of the ODBC data source used to connect to Versatrans databases</td>
+</tr>
+<tr class="even">
+<td><em>RP_DATABASE</em></td>
+<td>name of the RP database to use</td>
+</tr>
+<tr class="odd">
+<td><em>OS_DATABASE</em></td>
+<td>name of the Onscreen database to use</td>
+</tr>
+<tr class="even">
+<td><em>UNCOVERED_URL</em></td>
+<td>URL of a google sheet containing uncovered trips list (required)</td>
+</tr>
+<tr class="odd">
+<td><em>MAIL_TO</em></td>
+<td>comma separated list of email addresses to send notifications to. (required)</td>
+</tr>
+<tr class="even">
+<td><em>MAIL_FROM</em></td>
+<td>gmail address from which notifications should be sent (required)</td>
+</tr>
+<tr class="odd">
+<td><em>TZ</em></td>
+<td>time zone, defaults to “America/New_York”,</td>
+</tr>
+<tr class="even">
+<td><em>CURL_SSL_BACKEND</em></td>
+<td>this should always be set to “openssl” (required)</td>
+</tr>
+<tr class="odd">
+<td><em>ZONAR_CUSTOMER</em></td>
+<td>Zonar customer ID (required)</td>
+</tr>
+<tr class="even">
+<td><em>ZONAR_USER</em></td>
+<td>Zonar user name (required)</td>
+</tr>
+<tr class="odd">
+<td><em>ZONAR_PASS</em></td>
+<td>ZOnar password (required)</td>
+</tr>
+<tr class="even">
+<td>——————</td>
+<td>—————————————————————————-</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">
