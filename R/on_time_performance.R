@@ -80,7 +80,7 @@ otp_report <- function(date = as.character(Sys.Date()),
 
 
   dataRoute <- dplyr::collect(dplyr::select(dplyr::tbl(conn_rp, "Route"), "VisibleRouteID", "RouteSetID", "Name", "ActualLoad", "Days"))
-  names(dataRoute) <- c("RPRoute", "RouteSetID", "RouteName", "load", "Days")
+  names(dataRoute) <- c("RPRoute", "RouteSetID", "RouteName", "ActualLoad", "Days")
   dataRouteSet <- dplyr::collect(dplyr::select(dplyr::tbl(conn_rp, "RouteSet"), "RecordID", "Name"))
   names(dataRouteSet) <- c("RouteSetID", "RouteSetName")
   dataRoute <- dplyr::mutate(dataRoute, across(where(is.character), stringr::str_squish))
@@ -145,7 +145,7 @@ otp_report <- function(date = as.character(Sys.Date()),
     AMPM = stringr::str_extract(.data$RouteSetName, stringr::regex("\\b(AM|PM)\\b", ignore_case = TRUE)),
     AMPM = stringr::str_to_upper(stringr::str_squish(AMPM)),
     # some routes should be excluded, e.g. most all day shuttles
-    excludedShuttlesEtc = dplyr::case_when(.data$load == 0 & .data$RouteSetName != "CHARLESTOWN HS Combo AM" ~ TRUE,
+    excludedShuttlesEtc = dplyr::case_when(.data$ActualLoad == 0 & .data$RouteSetName != "CHARLESTOWN HS Combo AM" ~ TRUE,
                                            grepl("boston ballet", .data$RouteSetName, ignore.case = TRUE) ~ TRUE,
                                            grepl("strive.*shuttle", .data$RouteSetName, ignore.case = TRUE) ~ TRUE,
                                            grepl("horace mann afterschool pm", .data$RouteSetName, ignore.case = TRUE) ~ TRUE,
@@ -199,10 +199,10 @@ otp_report <- function(date = as.character(Sys.Date()),
   }
   zonarSched <- dplyr::mutate(zonarSched, across(where(is.character), stringr::str_squish))
   zonarSched <- dplyr::rename(zonarSched,
-                              zonarAssetID = "Asset ID",
-                              zonarCategory = "category",
-                              zonarActualTime = "time_in",
-                              zonarDuration = "duration")
+                              ZonarAssetID = "Asset ID",
+                              ZonarCategory = "category",
+                              ZonarActualTime = "time_in",
+                              ZonarDuration = "duration")
   zones <- dplyr::inner_join(zones, dataBuilding, by = c(name = "Name"))
 
   zonarSched <- dplyr::left_join(zonarSched, dataBuilding, by = c(Zone = "Name"))
@@ -212,9 +212,9 @@ otp_report <- function(date = as.character(Sys.Date()),
     zonarSched, by = c(RPVehicle = "Asset", "AnchorAbbrev"))
 
   ## Calculate delay
-  dataSched <- dplyr::mutate(dataSched, zonarDelayTime = as.integer(difftime(.data$zonarActualTime, .data$ExpectedTime, units = "mins")))
+  dataSched <- dplyr::mutate(dataSched, ZonarDelayTime = as.integer(difftime(.data$ZonarActualTime, .data$ExpectedTime, units = "mins")))
   dataSched <- dplyr::group_by(dataSched, .data$Zone, .data$RPVehicle, .data$RPRoute)
-  dataSched <- dplyr::slice_min(dataSched, abs(.data$zonarDelayTime), n = 1)
+  dataSched <- dplyr::slice_min(dataSched, abs(.data$ZonarDelayTime), n = 1)
 
   dataFull <-
     dplyr::full_join(
@@ -226,40 +226,40 @@ otp_report <- function(date = as.character(Sys.Date()),
     dplyr::mutate(
       dataFull,
       OvernightGarage = stringr::str_remove(OvernightGarage, " .*$"),
-      inZonar = !is.na(.data$zonarActualTime),
-      inOnscreen = !is.na(.data$ActualTime),
+      InZonar = !is.na(.data$ZonarActualTime),
+      InOnscreen = !is.na(.data$ActualTime),
       ## the rule for choosing an arrival time are documented more fully in the package vignette. Basically
       ## we first try to take the one near the expected time, and failing that we the one closest to the expected time.
-      Arrival = dplyr::case_when(is.na(.data$ActualTime) ~ .data$zonarActualTime, TRUE ~ .data$ActualTime),
-      Arrival = dplyr::case_when((.data$zonarDelayTime > -10 & .data$zonarDelayTime < !!cutoff_max) &
-                                   (.data$DelayTime < -10 | .data$DelayTime > cutoff_max) ~ .data$zonarActualTime,
+      Arrival = dplyr::case_when(is.na(.data$ActualTime) ~ .data$ZonarActualTime, TRUE ~ .data$ActualTime),
+      Arrival = dplyr::case_when((.data$ZonarDelayTime > -10 & .data$ZonarDelayTime < !!cutoff_max) &
+                                   (.data$DelayTime < -10 | .data$DelayTime > !!cutoff_max) ~ .data$ZonarActualTime,
                                  (.data$DelayTime > -10 & .data$DelayTime < !!cutoff_max) &
-                                   (.data$zonarDelayTime < -10 | .data$zonarDelayTime > cutoff_max) ~ .data$ActualTime,
-                                 (.data$zonarDelayTime > cutoff_min & .data$zonarDelayTime < !!cutoff_max) &
-                                   (.data$DelayTime < cutoff_min | .data$DelayTime > cutoff_max) ~ .data$zonarActualTime,
-                                 (.data$DelayTime > cutoff_min & .data$DelayTime < !!cutoff_max) &
-                                   (.data$zonarDelayTime < cutoff_min | .data$zonarDelayTime > cutoff_max) ~ .data$ActualTime,
-                                 abs(.data$DelayTime) < abs(.data$zonarDelayTime) ~ .data$ActualTime,
-                                 TRUE ~ .data$zonarActualTime),
-      Arrival = dplyr::case_when(is.na(.data$Arrival) ~ .data$zonarActualTime,
+                                   (.data$ZonarDelayTime < -10 | .data$ZonarDelayTime > !!cutoff_max) ~ .data$ActualTime,
+                                 (.data$ZonarDelayTime > !!cutoff_min & .data$ZonarDelayTime < !!cutoff_max) &
+                                   (.data$DelayTime < !!cutoff_min | .data$DelayTime > !!cutoff_max) ~ .data$ZonarActualTime,
+                                 (.data$DelayTime > !!cutoff_min & .data$DelayTime < !!cutoff_max) &
+                                   (.data$ZonarDelayTime < !!cutoff_min | .data$ZonarDelayTime > !!cutoff_max) ~ .data$ActualTime,
+                                 abs(.data$DelayTime) < abs(.data$ZonarDelayTime) ~ .data$ActualTime,
+                                 TRUE ~ .data$ZonarActualTime),
+      Arrival = dplyr::case_when(is.na(.data$Arrival) ~ .data$ZonarActualTime,
                                  TRUE ~ .data$Arrival),
       Arrival = dplyr::case_when(is.na(.data$Arrival) ~ .data$ActualTime,
                                  TRUE ~ .data$Arrival),
-      arrivalTimeSource = dplyr::case_when(.data$Arrival == zonarActualTime ~ "Zonar",
+      ArrivalTimeSource = dplyr::case_when(.data$Arrival == ZonarActualTime ~ "Zonar",
                                            .data$Arrival == ActualTime ~ "Onscreen",
                                            TRUE ~ NA),
-      delayTimeCombined = as.integer(difftime(.data$Arrival, .data$ExpectedTime, units = "mins")),
-      arrivalInWindow = dplyr::case_when(!is.na(.data$delayTimeCombined) &.data$delayTimeCombined > cutoff_min & .data$delayTimeCombined < cutoff_max ~ TRUE,
-                                         !is.na(.data$delayTimeCombined) ~ FALSE,
+      DelayTimeCombined = as.integer(difftime(.data$Arrival, .data$ExpectedTime, units = "mins")),
+      ArrivalInWindow = dplyr::case_when(!is.na(.data$DelayTimeCombined) &.data$DelayTimeCombined > cutoff_min & .data$DelayTimeCombined < cutoff_max ~ TRUE,
+                                         !is.na(.data$DelayTimeCombined) ~ FALSE,
                                          TRUE ~ NA),
-      zoneInZonar = .data$AnchorAbbrev %in% !!zones$AnchorAbbrev
+      ZoneInZonar = .data$AnchorAbbrev %in% !!zones$AnchorAbbrev
     )
 
   ## we may well have multiple matches per route at this point since we joined Zonar data
   ## by Zone/Anchor and Asset/RPVehicle. Here we take a temporally close match, prioritizing those
   ## that did not arrive long before the scheduled time and are therefore more likely to be the correct match.
   dataFull <- dplyr::arrange(dplyr::group_by(dataFull, .data$RPRoute, .data$EffectiveDate),
-                             .data$RPRoute, .data$EffectiveDate, .data$delayTimeCombined > -10, desc(.data$arrivalInWindow), abs(.data$delayTimeCombined))
+                             .data$RPRoute, .data$EffectiveDate, .data$DelayTimeCombined > -10, desc(.data$ArrivalInWindow), abs(.data$DelayTimeCombined))
   dataFull <- dplyr::rename(dataFull, Date = "EffectiveDate")
   dataFull <- dplyr::ungroup(dplyr::slice(dataFull,1))
 
@@ -273,7 +273,7 @@ otp_report <- function(date = as.character(Sys.Date()),
   dataFull <- dplyr::left_join(dataFull, dataUncovered, by = c(OriginalRPVehicle = "RPVehicle", "AMPM", "RouteSetName", "Date"))
   dataFull <- dplyr::mutate(dataFull, Uncovered = dplyr::case_when(is.na(.data$Uncovered) ~ FALSE,
                                                                    TRUE ~ .data$Uncovered))
-  dataCovered <- dplyr::filter(dataFull, .data$Uncovered & (!is.na(.data$ActualTime) | !is.na(.data$zonarActualTime)))
+  dataCovered <- dplyr::filter(dataFull, .data$Uncovered & (!is.na(.data$ActualTime) | !is.na(.data$ZonarActualTime)))
   ## delete trips incorrectly listed as uncovered
   if(nrow(dataCovered) > 0) {
     ducheck <- nrow(googlesheets4::read_sheet(uncovered_url, col_types = "Dccccc"))
@@ -305,22 +305,22 @@ otp_report <- function(date = as.character(Sys.Date()),
   }
   dataFull <- dplyr::mutate(
     dataFull,
-    cutoff_min = !!cutoff_min, cutoff_max = !!cutoff_max,
-    Uncovered = dplyr::case_when(!is.na(.data$ActualTime) | !is.na(.data$zonarActualTime) ~ FALSE,
+    CutoffMin = !!cutoff_min, CutoffMax = !!cutoff_max,
+    Uncovered = dplyr::case_when(!is.na(.data$ActualTime) | !is.na(.data$ZonarActualTime) ~ FALSE,
                                  TRUE ~ .data$Uncovered),
     TripCategory = dplyr::case_when(
       .data$excludedShuttlesEtc ~ "Excluded",
       .data$Uncovered ~ "Uncovered",
-      !.data$arrivalInWindow ~ "Arrived outside window",
-      !is.na(.data$delayTimeCombined) ~ "Reported",
-      is.na(.data$delayTimeCombined) ~ "Unreported",
+      !.data$ArrivalInWindow ~ "Arrived outside window",
+      !is.na(.data$DelayTimeCombined) ~ "Reported",
+      is.na(.data$DelayTimeCombined) ~ "Unreported",
       TRUE ~ "Unknown")
     )
   lubridate::tz(dataFull$Date) <- TZ
   class(dataFull) <- c("otpdata", class(dataFull))
-  dataFull <- dplyr::select(dataFull, -"Driver", -"RouteSetID", -"zoneID", -"zonarAssetID", -"time_out", -"tgroup", -"PackageNumber")
+  dataFull <- dplyr::select(dataFull, -"Driver", -"RouteSetID", -"zoneID", -"ZonarAssetID", -"time_out", -"tgroup", -"PackageNumber")
   dataFull <- dplyr::relocate(dataFull,
-                              "Arrival", "delayTimeCombined", "ActualTime", "zonarActualTime", "DelayTime", "zonarDelayTime",
+                              "Arrival", "DelayTimeCombined", "ActualTime", "ZonarActualTime", "DelayTime", "ZonarDelayTime",
                               .after = "ExpectedTime")
   dataFull <- dplyr::relocate(dataFull, "AMPM", .after = "Date")
   dataFull
@@ -329,7 +329,7 @@ otp_report <- function(date = as.character(Sys.Date()),
 #'
 #' @export
 unreported_trips <- function(data) {
-  dplyr::filter(data, .data$excludedShuttlesEtc | (is.na(.data$delayTimeCombined) & !.data$Uncovered))
+  dplyr::filter(data, .data$excludedShuttlesEtc | (is.na(.data$DelayTimeCombined) & !.data$Uncovered))
 }
 
 #'
@@ -339,13 +339,13 @@ prepare_raw <- function(data, oldstyle = FALSE, ...) {
   if(!inherits(data, "otpdata")) stop("`data` must be an otpdata object or a formattedotp object")
   #otp_data <- dplyr::filter(
   #  data,
-  #  !.data$excludedShuttlesEtc & (!is.na(.data$delayTimeCombined) | .data$Uncovered))
+  #  !.data$excludedShuttlesEtc & (!is.na(.data$DelayTimeCombined) | .data$Uncovered))
   otp_data <- dplyr::rename(
     data,
-    Delay.Minutes. = "delayTimeCombined",
+    Delay.Minutes. = "DelayTimeCombined",
     Planned.Anchor.Time = "ExpectedTime",
     Vehicle = "RPVehicle",
-    Riders = "load")
+    Riders = "ActualLoad")
   otp_data <- dplyr::mutate(
     otp_data,
     OnTimeRateByAnchor = ifelse(.data$Uncovered | .data$Delay.Minutes. > 0, 0,1),
