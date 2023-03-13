@@ -14,7 +14,7 @@ for public reporting."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
     
     <a class="navbar-brand me-2" href="../index.html">BPSTranspoReportR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -155,11 +155,11 @@ Even with this the time needed to test this function will be long.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ RPRoute             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ ExpectedTime        <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ Arrival             <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ delayTimeCombined   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ DelayTimeCombined   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ ActualTime          <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ zonarActualTime     <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ ZonarActualTime     <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ DelayTime           <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ zonarDelayTime      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ ZonarDelayTime      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ Direction           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ AnchorAbbrev        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ Date                <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span> </span>
@@ -167,23 +167,23 @@ Even with this the time needed to test this function will be long.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ OvernightGarage     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ Names               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ RouteName           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ load                <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ ActualLoad          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ Days                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ RouteSetName        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ excludedShuttlesEtc <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ OriginalRPVehicle   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ Zone                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ zonarCategory       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ zonarDuration       <span style="color: #949494; font-style: italic;">&lt;drtn&gt;</span>  secs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ inZonar             <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ inOnscreen          <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ arrivalTimeSource   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ arrivalInWindow     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ zoneInZonar         <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ ZonarCategory       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ ZonarDuration       <span style="color: #949494; font-style: italic;">&lt;drtn&gt;</span>  secs</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ InZonar             <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ InOnscreen          <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ ArrivalTimeSource   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ ArrivalInWindow     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ ZoneInZonar         <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ OSVehicleOverride   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ Uncovered           <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ cutoff_min          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ cutoff_max          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ CutoffMin           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ CutoffMax           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ TripCategory        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
 </code></pre></div>
     </div>

@@ -70,9 +70,9 @@ otp_report <- function(date = as.character(Sys.Date()),
   lubridate::tz(startDate) <- TZ
 
   conn_rp <- RVersatransRP::rp_connect(database = rp_database, rp_odbc_name = rp_odbc_name, TZ = TZ)
-  on.exit(DBI::dbDisconnect(conn_rp))
+  on.exit(DBI::dbDisconnect(conn_rp), add = TRUE)
   conn_os <- RVersatransRP::rp_connect(database = os_database, rp_odbc_name = rp_odbc_name, TZ = TZ)
-  on.exit(DBI::dbDisconnect(conn_os))
+  on.exit(DBI::dbDisconnect(conn_os), add = TRUE)
 
   dataBuilding <- dplyr::collect(dplyr::select(dplyr::tbl(conn_rp, "Building"), "Name", "AnchorAbbrev"))
   dataBuilding <- dplyr::filter(dataBuilding, .data$AnchorAbbrev != "" & !is.na(.data$AnchorAbbrev))
@@ -336,7 +336,7 @@ unreported_trips <- function(data) {
 #' @export
 prepare_raw <- function(data, oldstyle = FALSE, ...) {
   if(inherits(data, "otpformatted")) return(data)
-  if(!inherits(data, "otpdata")) stop("`data` must be an otpdata object or a formattedotp object")
+  if(!inherits(data, "otpdata")) stop("`data` must be an otpdata object or a otpformatted object")
   #otp_data <- dplyr::filter(
   #  data,
   #  !.data$excludedShuttlesEtc & (!is.na(.data$DelayTimeCombined) | .data$Uncovered))
@@ -409,44 +409,40 @@ prepare_raw <- function(data, oldstyle = FALSE, ...) {
                  "Late25Min", "Late30Min", "AMPM", "TimeTier", "TypeOfBus",
                  "BusDay", "Yard", "X.1", "X.2", "AnchorTimeConverted", "X.5")]
   }
-  class(out) <- c("formattedotp", setdiff(class(out), "otpdata"))
+  class(out) <- c("otpformatted", setdiff(class(out), "otpdata"))
   out
 }
 
 
 #'
 #' @export
-summary.formattedotp <- function(otp_data, ...) {
+summary.otpformatted <- function(otp_data, internal=FALSE, ...) {
   df <- dplyr::filter(otp_data, !.data$excludedShuttlesEtc)
   df$X.2 <- as.numeric(df$X.2)
 
   if(length(unique(otp_data$Date)) > 1) stop("Multiple dates detected, please iterate explicitly.")
 
-  otp <- data.frame(date = as.character(unique(otp_data$Date)),
-                    AM = mean(df[df$AMPM == "AM", ][["TrueOnTime"]], na.rm = TRUE),
-                    PM = mean(df[df$AMPM == "PM", ][["Within10MinOfAnchor"]], na.rm = TRUE),
-                    AMLossITH = as.integer(round(sum(df[df$AMPM == "AM",][["X.2"]], na.rm = TRUE)/60,0)),
-                    DepPerformance = NA_real_,
-                    AM730 =  mean(df[df$TimeTier=="7:30",][["TrueOnTime"]], na.rm = TRUE),
-                    AM830 = mean(df[df$TimeTier=="8:30",][["TrueOnTime"]], na.rm = TRUE),
-                    AM930 = mean(df[df$TimeTier=="9:30",][["TrueOnTime"]], na.rm = TRUE),
-                    AMRead = mean(df[df$AMPM == "AM" & df$Yard=="Read",][["TrueOnTime"]], na.rm = TRUE),
-                    AMWash = mean(df[df$AMPM == "AM" & df$Yard=="Wash",][["TrueOnTime"]], na.rm = TRUE),
-                    AMFrpt = mean(df[df$AMPM == "AM" & df$Yard=="Frpt",][["TrueOnTime"]], na.rm = TRUE),
-                    LOT730 = as.integer(round(sum(df[df$TimeTier=="7:30",][["X.2"]]/60, na.rm = TRUE),0)),
-                    LOT830 = as.integer(round(sum(df[df$TimeTier=="8:30",][["X.2"]]/60, na.rm = TRUE),0)),
-                    LOT930 = as.integer(round(sum(df[df$TimeTier=="9:30",][["X.2"]]/60, na.rm = TRUE),0)),
-                    AMAnchor = mean(df[df$AMPM == "AM",][["OnTimeRateByAnchor"]], na.rm = TRUE),
-                    AM30min = mean(df[df$AMPM == "AM",][["Late15Min"]], na.rm = TRUE),
-                    AM45min = mean(df[df$AMPM == "AM",][["Late30Min"]], na.rm = TRUE),
-                    PMAnchor = mean(df[df$AMPM == "PM",][["OnTimeRateByAnchor"]], na.rm = TRUE),
-                    PM15min = mean(df[df$AMPM == "PM",][["Late10Min"]], na.rm = TRUE),
-                    PM30min = mean(df[df$AMPM == "PM",][["Late25Min"]], na.rm = TRUE),
-                    ModRead = mean(df[df$AMPM == "PM" & df$Yard=="Read", ][["Within10MinOfAnchor"]], na.rm = TRUE),
-                    ModWash = mean(df[df$AMPM == "PM" & df$Yard=="Wash", ][["Within10MinOfAnchor"]], na.rm = TRUE),
-                    ModFree = mean(df[df$AMPM == "PM" & df$Yard=="Frpt", ][["Within10MinOfAnchor"]], na.rm = TRUE))
+  otp <- data.frame(OTP_Date                                = as.character(unique(otp_data$Date)),
+                    OTP_AM                                  = mean(df[df$AMPM == "AM", ][["TrueOnTime"]], na.rm = TRUE),
+                    OTP_PM                                  = mean(df[df$AMPM == "PM", ][["Within10MinOfAnchor"]], na.rm = TRUE),
+                    AM.by.Time.Tier_7.30                    = mean(df[df$TimeTier=="7:30",][["TrueOnTime"]], na.rm = TRUE),
+                    AM.by.Time.Tier_8.30                    = mean(df[df$TimeTier=="8:30",][["TrueOnTime"]], na.rm = TRUE),
+                    AM.by.Time.Tier_9.30                    = mean(df[df$TimeTier=="9:30",][["TrueOnTime"]], na.rm = TRUE),
+                    AM.by.Yard_READ                         = mean(df[df$AMPM == "AM" & df$Yard=="Read",][["TrueOnTime"]], na.rm = TRUE),
+                    AM.by.Yard_WASH                         = mean(df[df$AMPM == "AM" & df$Yard=="Wash",][["TrueOnTime"]], na.rm = TRUE),
+                    AM.by.Yard_FRPT                         = mean(df[df$AMPM == "AM" & df$Yard=="Frpt",][["TrueOnTime"]], na.rm = TRUE),
+                    AM.OTP_Within.Anchor                    = mean(df[df$AMPM == "AM",][["OnTimeRateByAnchor"]], na.rm = TRUE),
+                    AM.OTP_Within.15.Minutes.of.On.Time     = mean(df[df$AMPM == "AM",][["Late15Min"]], na.rm = TRUE),
+                    AM.OTP_Within.30.Minutes.of.School.Time = mean(df[df$AMPM == "AM",][["Late30Min"]], na.rm = TRUE),
+                    PM.by.Yard_READ                         = mean(df[df$AMPM == "PM" & df$Yard=="Read", ][["Within10MinOfAnchor"]], na.rm = TRUE),
+                    PM.by.Yard_WASH                         = mean(df[df$AMPM == "PM" & df$Yard=="Wash", ][["Within10MinOfAnchor"]], na.rm = TRUE),
+                    PM.by.Yard_FRPT                         = mean(df[df$AMPM == "PM" & df$Yard=="Frpt", ][["Within10MinOfAnchor"]], na.rm = TRUE),
+                    PM.OTP_Within.Anchor                    = mean(df[df$AMPM == "PM",][["OnTimeRateByAnchor"]], na.rm = TRUE),
+                    PM.OTP_Within.15.Minutes.of.On.Time     = mean(df[df$AMPM == "PM",][["Late10Min"]], na.rm = TRUE),
+                    PM.OTP_Within.30.Minutes.of.School.Time = mean(df[df$AMPM == "PM",][["Late25Min"]], na.rm = TRUE))
 
-  as.data.frame(otp)
+  class(otp) <- c("otpsummary", class(otp))
+  otp
 }
 
 #'
@@ -455,3 +451,82 @@ summary.otpdata <- function(data) {
   data <- prepare_raw(data)
   summary(data)
 }
+
+
+#'
+#' @export
+update_otp_report = function(data,
+                             id=c(Sys.getenv("OTP_REPORT_ID"), Sys.getenv("OTP_REPORT_INTERNAL_ID")),
+                             sheet = Sys.getenv("OTP_SHEET"),
+                             internal=FALSE,  allow_unmatched = FALSE,
+                             ...) {
+  UseMethod("update_otp_report")
+}
+
+#'
+#' @export
+update_otp_report.otpdata <- function(data,
+                                      id=c(Sys.getenv("OTP_REPORT_ID"), Sys.getenv("OTP_REPORT_INTERNAL_ID")),
+                                      sheet = Sys.getenv("OTP_SHEET"),
+                                      internal=FALSE,  allow_unmatched = FALSE,
+                                      ...) {
+
+  al <- as.list(match.call())[-1]
+  al$data <- summary(data)
+  do.call(update_otp_report, al)
+}
+
+#'
+#' @export
+update_otp_report.otpsummary <- function(data,
+                                         id=c(Sys.getenv("OTP_REPORT_ID"), Sys.getenv("OTP_REPORT_INTERNAL_ID")),
+                                         sheet = Sys.getenv("OTP_SHEET"),
+                                         internal=FALSE,  allow_unmatched = FALSE,
+                                         ...) {
+
+  browser()
+  if(nrow(data) != 1) stop("Input 'data' must be a single row, please iterate explicity if you need to update multiple rows")
+
+  options(gargle_oauth_email = TRUE)
+
+  if(missing(id)) {
+    if(internal) id = Sys.getenv("OTP_REPORT_ID")
+    if(!internal) id = Sys.getenv("OTP_REPORT_INTERNAL_ID")
+  }
+
+  ## Matching the data to the sheet column headers is a really pain, but otherwise we just
+  ## have to stick it in there and hope it matches... better to try checking it, as painful as it is.
+  suppressMessages(sht <- googlesheets4::read_sheet(ss=id, sheet = sheet, skip=1, col_names = FALSE, n_max = 3, col_types = "c", trim_ws = TRUE))
+  sn <- dplyr::as_tibble(t(sht))
+  sn <- tidyr::fill(sn, V1, .direction = "down")[c(-2,-1), ]
+  sn[is.na(sn$V1), "V1"] <- ""
+  sn[sn$V1 != "", "V1"] <- paste0(sn[sn$V1 != "", ][["V1"]], "_")
+  snames <- make.names(paste0(sn$V1, sn$V2))
+
+  missingNames <- setdiff(snames, names(data))
+  if(length(missingNames) > 0) {
+    msg <- paste("Could not match input data names to all the sheet column names, input is missing these columns:\n", missingNames)
+    if(allow_unmatched){
+      warning(msg)
+    } else {
+      stop(msg)
+    }
+  }
+
+  ## Make sure we have a date column
+  suppressMessages(gsreport <- googlesheets4::read_sheet(ss=id, sheet = sheet, skip=2, col_names = TRUE, trim_ws = TRUE))
+  DateCol <- which(names(gsreport) == "Date")
+  if(length(DateCol) != 1) stop("Could not find 'Date' column in row 3 of google sheet", id, "please check your sheet id and sheet name")
+  gsreport <- gsreport[, DateCol:ncol(gsreport)]
+  ## ugh, now we can actually update the report...
+  gsreport <- gsreport[, 1:length(snames)]
+  names(gsreport) <- snames
+  input <- tail(dplyr::bind_rows(gsreport, data), nrow(data))[, snames]
+  row <- which(gsreport$OTP_Date %in% input$OTP_Date) + 3 ## yes, the data starts on row 3. Ugh.
+  if(length(row) !=1) stop(paste0("Could not determine which row to update, please check that the 'Date' columns in 'data' and google sheet ", id, " match."))
+  range <- paste0(LETTERS[DateCol], as.character(row))
+  googlesheets4::range_write(input, ss = id, sheet = sheet, range = range, col_names = FALSE, reformat = FALSE)
+
+  return(TRUE)
+}
+

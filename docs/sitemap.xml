@@ -13,6 +13,9 @@
     <loc>/reference/index.html</loc>
   </url>
   <url>
+    <loc>/reference/old_greensheets.html</loc>
+  </url>
+  <url>
     <loc>/reference/otp_report.html</loc>
   </url>
   <url>
@@ -26,5 +29,8 @@
   </url>
   <url>
     <loc>/reference/rp_report_student_monitor.html</loc>
+  </url>
+  <url>
+    <loc>/reference/tripchange_report.html</loc>
   </url>
 </urlset>
